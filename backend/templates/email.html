@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="gmail-bg">
+
+<div class="gmail-topbar">
+    <button class="back-btn" onclick="ignoreEmail()">← Inbox</button>
+</div>
+
+<div class="email-card">
+
+    <div class="email-header">
+        <div class="avatar">B</div>
+        <div>
+            <div id="sender" class="sender-name"></div>
+            <div class="sender-meta">to me</div>
+        </div>
+    </div>
+
+    <h2 id="subject" class="email-subject"></h2>
+
+    <div class="email-meta">
+        <span id="from-line"></span>
+        <span class="dot">•</span>
+        <span>Today</span>
+    </div>
+
+    <div id="body" class="email-body"></div>
+
+    <div class="email-link">
+        <a href="#" onclick="openLink(event)">Verify your account</a>
+    </div>
+
+    <div class="email-actions">
+        <button class="report-btn" onclick="reportPhishing()">
+             Report phishing
+        </button>
+    </div>
+
+</div>    
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

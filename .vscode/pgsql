@@ -1,0 +1,64 @@
+┌──────────────┐
+│   Inbox      │
+│ (No session) │
+└──────┬───────┘
+       │ click campaign
+       ▼
+┌──────────────────────────┐
+│ Campaign Started         │
+│ session initialized      │
+│ score = 50               │
+│ recovery = false         │
+└────────┬─────────────────┘
+         │
+         ▼
+┌──────────────────────────┐
+│ Episode Loaded           │
+│ (email / page / info)    │
+└────────┬─────────────────┘
+         │
+         │ user action
+         ▼
+┌──────────────────────────┐
+│ Action Evaluated         │
+│ - log action             │
+│ - update score           │
+│ - update recovery flag   │
+└───────┬─────────┬────────┘
+        │         │
+        │         │
+        │         │
+        ▼         ▼
+┌─────────────┐   ┌─────────────────────┐
+│ Continue    │   │ Recovery Mode        │
+│ (safe path) │   │ (mistake detected)   │
+└──────┬──────┘   └─────────┬───────────┘
+       │                    │
+       ▼                    ▼
+┌──────────────────────────┐
+│ Next Episode Loaded      │
+│ session["episode_id"]    │
+└────────┬─────────────────┘
+         │
+         │ user action
+         ▼
+┌──────────────────────────┐
+│ Campaign Ends?           │
+│ ends_campaign = true     │
+└───────┬─────────┬────────┘
+        │         │
+       no        yes
+        │         │
+        ▼         ▼
+ (back to)   ┌────────────────────┐
+ Episode     │ Campaign Completed  │
+             │ Final score         │
+             │ Risk level          │
+             │ Feedback summary    │
+             └─────────┬──────────┘
+                       │
+                       ▼
+                  Session cleared
+                       │
+                       ▼
+                     Inbox

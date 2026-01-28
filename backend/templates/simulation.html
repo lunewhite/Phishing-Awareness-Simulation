@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="bank-bg">
+
+<div class="bank-login-card">
+
+    <div class="bank-header">
+        <h2>Your Bank</h2>
+        <p>Secure Online Banking</p>
+    </div>
+
+    <input id="username" type="text" placeholder="User ID"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+
+    <p id="login-error" class="login-error">
+         Please enter both User ID and Password.
+    </p>
+
+
+    <button class="login-btn" onclick="submitCredentials()">
+        Login
+    </button>
+
+    <button class="cancel-btn" onclick="closePage()">
+        Cancel
+    </button>
+
+    <p class="secure-note">🔒 This is a secure connection</p>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<!-- Compromise Modal-->
+ <div id="compromise-modal" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.6);
+    align-items:center;
+    justify-content:center;
+">
+
+    <div style="
+        background:white;
+        padding:25px;
+        max-width:400px;
+        border-radius:6px;
+        text-align:center;
+    ">
+        <h3 style="color:#d9534f;">Account Compromised</h3>
+        <p>
+            You entered your login credentials on a suspicious page.
+            This action has compromised your account.
+        </p>
+        <button onclick="acknowledgeCompromise()">
+            Continue
+        </button>
+    </div>
+</div>
+</body>
+</html>

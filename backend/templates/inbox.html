@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inbox</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="gmail-body">
+
+<div class="gmail-wrapper">
+
+    <!-- Inbox header -->
+    <div class="gmail-inbox-header">
+        <span class="inbox-title">Inbox</span>
+    </div>
+
+    <!-- PHISHING EMAIL (ACTIVE, UNREAD) -->
+    <div class="gmail-row unread active" onclick="openEmail()">
+        <div class="row-left">
+            <span class="checkbox"></span>
+        </div>
+
+        <div class="row-main">
+            <span class="sender">Your Bank</span>
+            <span class="subject">
+                Urgent: Verify Your Account
+            </span>
+            <span class="snippet">
+                We detected unusual activity on your account. Please verify immediately.
+            </span>
+        </div>
+
+        <div class="row-time">Now</div>
+    </div>
+
+    <!-- FAKE EMAILS -->
+    <div class="gmail-row unread disabled">
+        <div class="row-left">
+            <span class="checkbox"></span>
+        </div>
+        <div class="row-main">
+            <span class="sender">Google</span>
+            <span class="subject">Security alert</span>
+            <span class="snippet">New sign-in from Chrome on Windows</span>
+        </div>
+        <div class="row-time">9:41 AM</div>
+    </div>
+
+    <div class="gmail-row read disabled">
+        <div class="row-left">
+            <span class="checkbox"></span>
+        </div>
+        <div class="row-main">
+            <span class="sender">LinkedIn</span>
+            <span class="subject">You appeared in 5 searches</span>
+            <span class="snippet">See who viewed your profile</span>
+        </div>
+        <div class="row-time">8:12 AM</div>
+    </div>
+
+    <div class="gmail-row read disabled">
+        <div class="row-left">
+            <span class="checkbox"></span>
+        </div>
+        <div class="row-main">
+            <span class="sender">Amazon</span>
+            <span class="subject">Your order has shipped</span>
+            <span class="snippet">Track your package</span>
+        </div>
+        <div class="row-time">Yesterday</div>
+    </div>
+    
+    <div class="gmail-row unread disabled">
+         <div class="row-left">
+             <span class="checkbox"></span>
+         </div>
+         <div class="row-main">
+             <span class="sender">Netflix</span>
+             <span class="subject">Payment issue detected</span>
+             <span class="snippet">Please update your billing information</span>
+         </div>
+         <div class="row-time">Yesterday</div>
+    </div>
+
+    <div class="gmail-row read disabled">
+         <div class="row-left">
+             <span class="checkbox"></span>
+         </div>
+         <div class="row-main">
+             <span class="sender">GitHub</span>
+             <span class="subject">Dependabot alerts</span>
+             <span class="snippet">Security vulnerabilities detected in your repo</span>
+         </div>
+         <div class="row-time">2 days ago</div>
+    </div>
+
+    <div class="gmail-row read disabled">
+         <div class="row-left">
+             <span class="checkbox"></span>
+         </div>
+         <div class="row-main">
+             <span class="sender">University Admin</span>
+             <span class="subject">Exam schedule update</span>
+             <span class="snippet">The revised exam timetable is now available</span>
+         </div>
+         <div class="row-time">2 days ago</div>
+    </div>
+
+<div class="gmail-row read disabled">
+    <div class="row-left">
+        <span class="checkbox"></span>
+    </div>
+    <div class="row-main">
+        <span class="sender">Microsoft</span>
+        <span class="subject">Your weekly activity summary</span>
+        <span class="snippet">Here’s what you’ve been working on this week</span>
+    </div>
+    <div class="row-time">3 days ago</div>
+</div>
+
+<div class="gmail-row read disabled">
+    <div class="row-left">
+        <span class="checkbox"></span>
+    </div>
+    <div class="row-main">
+        <span class="sender">Twitter</span>
+        <span class="subject">New login from Chrome</span>
+        <span class="snippet">We noticed a new login to your account</span>
+    </div>
+    <div class="row-time">3 days ago</div>
+</div>
+
+<div class="gmail-row read disabled">
+    <div class="row-left">
+        <span class="checkbox"></span>
+    </div>
+    <div class="row-main">
+        <span class="sender">Coursera</span>
+        <span class="subject">Course progress reminder</span>
+        <span class="snippet">You’re halfway through your cybersecurity course</span>
+    </div>
+    <div class="row-time">4 days ago</div>
+</div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
