@@ -2,10 +2,14 @@ from flask import Flask, jsonify, request, session, render_template
 import sqlite3
 from pathlib import Path
 
-app = Flask(__name__)
-app.secret_key = "phishing-awareness-secret-key"
-
 BASE_DIR = Path(__file__).resolve().parent
+app = Flask(
+    __name__,
+    template_folder=str(BASE_DIR),
+    static_folder=str(BASE_DIR),
+    static_url_path="/static"
+)
+app.secret_key = "phishing-awareness-secret-key"
 DB_PATH = BASE_DIR / "phishing.db"
 
 # --------------------------- Route Handlers ---------------------------
@@ -181,9 +185,6 @@ def submit_action():
         session["strengths"].append(
             "Recognized suspicious login page and exited without entering credentials"
         )
-
-    if action_type in ["click", "submit"]:
-        session["mistakes"].append(action_type)
 
     if action_type in ["report", "report_after_cancel"]:
         session["strengths"].append("reported_phishing")
