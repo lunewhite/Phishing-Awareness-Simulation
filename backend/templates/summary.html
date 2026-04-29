@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Training Summary</title>
+    <title>Awareness Score Report</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="summary-bg">
 
 <div class="summary-card">
 
-    <h2>Training Completed</h2>
+    <h2>Phishing Awareness Report</h2>
     <p class="summary-subtitle">
-        Here’s how you handled this phishing attempt
+        Review your score, risk level, and the actions that affected your result.
     </p>
 
     <div class="score-box">
@@ -18,27 +18,32 @@
         <div id="risk-level" class="risk"></div>
     </div>
 
+    <div class="summary-section tips">
+        <h3>Risk Interpretation</h3>
+        <p id="risk-explainer">Your risk interpretation will appear here.</p>
+    </div>
+
     <div class="summary-section">
-        <h3>What went wrong</h3>
+        <h3>Actions That Increased Risk</h3>
         <ul id="mistakes-list"></ul>
     </div>
 
     <div class="summary-section">
-        <h3>What you did right</h3>
+        <h3>Actions That Reduced Risk</h3>
         <ul id="strengths-list"></ul>
     </div>
 
     <div class="summary-section tips">
-        <h3>How to stay safe next time</h3>
+        <h3>What To Do Next</h3>
         <ul>
-            <li>Be cautious with urgent messages asking for action</li>
-            <li>Never enter credentials from email links</li>
-            <li>Check sender domains carefully</li>
-            <li>Report suspicious emails as soon as possible</li>
+            <li>Pause when an email creates urgency or fear.</li>
+            <li>Verify sender identity before clicking links.</li>
+            <li>Type important website addresses directly in the browser.</li>
+            <li>Report suspicious emails immediately.</li>
         </ul>
     </div>
 
-    <button onclick="restartTraining()">Restart Training</button>
+    <button onclick="restartTraining()">Start New Simulation</button>
 
 </div>
 

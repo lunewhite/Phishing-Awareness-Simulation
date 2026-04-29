@@ -4,142 +4,146 @@
     <title>Inbox</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="gmail-body">
+<body class="gmail-body-modern">
 
-<div class="gmail-wrapper">
+<div class="gmail-wrapper-modern">
 
-    <!-- Inbox header -->
-    <div class="gmail-inbox-header">
-        <span class="inbox-title">Inbox</span>
+    <div class="gmail-inbox-header-modern">
+        <span class="inbox-title-modern">Inbox</span>
     </div>
 
-    <!-- PHISHING EMAIL (ACTIVE, UNREAD) -->
-    <div class="gmail-row unread active" onclick="openEmail()">
-        <div class="row-left">
-            <span class="checkbox"></span>
+    <div id="row-ep2" class="gmail-row-modern unread-modern active-modern" onclick="openEmail('bank_ep_2')" style="display:none;">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
         </div>
-
-        <div class="row-main">
-            <span class="sender">Your Bank</span>
-            <span class="subject">
-                Urgent: Verify Your Account
-            </span>
-            <span class="snippet">
-                We detected unusual activity on your account. Please verify immediately.
-            </span>
+        <div class="row-main-modern">
+            <span class="sender-modern">State Bank of India</span>
+            <span class="new-badge-modern">New</span>
+            <span class="subject-modern">Reminder: Security Confirmation Still Pending</span>
+            <span class="snippet-modern">Your access remains limited until the pending check is completed.</span>
         </div>
-
-        <div class="row-time">Now</div>
+        <div class="row-time-modern">Now</div>
     </div>
 
-    <!-- FAKE EMAILS -->
-    <div class="gmail-row unread disabled">
-        <div class="row-left">
-            <span class="checkbox"></span>
+    <div id="row-ep1" class="gmail-row-modern unread-modern active-modern" onclick="openEmail('bank_ep_1')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
         </div>
-        <div class="row-main">
-            <span class="sender">Google</span>
-            <span class="subject">Security alert</span>
-            <span class="snippet">New sign-in from Chrome on Windows</span>
+        <div class="row-main-modern">
+            <span class="sender-modern">State Bank of India</span>
+            <span class="subject-modern">Notice: Account Access Temporarily Locked</span>
+            <span class="snippet-modern">Complete the pending security check to restore access.</span>
         </div>
-        <div class="row-time">9:41 AM</div>
+        <div class="row-time-modern">Now</div>
     </div>
 
-    <div class="gmail-row read disabled">
-        <div class="row-left">
-            <span class="checkbox"></span>
+    <div class="gmail-row-modern unread-modern active-modern" onclick="openPreviewEmail('google_security')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
         </div>
-        <div class="row-main">
-            <span class="sender">LinkedIn</span>
-            <span class="subject">You appeared in 5 searches</span>
-            <span class="snippet">See who viewed your profile</span>
+        <div class="row-main-modern">
+            <span class="sender-modern">Google</span>
+            <span class="subject-modern">Security alert</span>
+            <span class="snippet-modern">New sign-in from Chrome on Windows</span>
         </div>
-        <div class="row-time">8:12 AM</div>
+        <div class="row-time-modern">9:41 AM</div>
     </div>
 
-    <div class="gmail-row read disabled">
-        <div class="row-left">
-            <span class="checkbox"></span>
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('linkedin_searches')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
         </div>
-        <div class="row-main">
-            <span class="sender">Amazon</span>
-            <span class="subject">Your order has shipped</span>
-            <span class="snippet">Track your package</span>
+        <div class="row-main-modern">
+            <span class="sender-modern">LinkedIn</span>
+            <span class="subject-modern">You appeared in 5 searches</span>
+            <span class="snippet-modern">See who viewed your profile</span>
         </div>
-        <div class="row-time">Yesterday</div>
-    </div>
-    
-    <div class="gmail-row unread disabled">
-         <div class="row-left">
-             <span class="checkbox"></span>
-         </div>
-         <div class="row-main">
-             <span class="sender">Netflix</span>
-             <span class="subject">Payment issue detected</span>
-             <span class="snippet">Please update your billing information</span>
-         </div>
-         <div class="row-time">Yesterday</div>
+        <div class="row-time-modern">8:12 AM</div>
     </div>
 
-    <div class="gmail-row read disabled">
-         <div class="row-left">
-             <span class="checkbox"></span>
-         </div>
-         <div class="row-main">
-             <span class="sender">GitHub</span>
-             <span class="subject">Dependabot alerts</span>
-             <span class="snippet">Security vulnerabilities detected in your repo</span>
-         </div>
-         <div class="row-time">2 days ago</div>
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('amazon_shipping')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">Amazon</span>
+            <span class="subject-modern">Your order has shipped</span>
+            <span class="snippet-modern">Track your package</span>
+        </div>
+        <div class="row-time-modern">Yesterday</div>
     </div>
 
-    <div class="gmail-row read disabled">
-         <div class="row-left">
-             <span class="checkbox"></span>
-         </div>
-         <div class="row-main">
-             <span class="sender">University Admin</span>
-             <span class="subject">Exam schedule update</span>
-             <span class="snippet">The revised exam timetable is now available</span>
-         </div>
-         <div class="row-time">2 days ago</div>
+    <div class="gmail-row-modern unread-modern active-modern" onclick="openPreviewEmail('netflix_billing')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">Netflix</span>
+            <span class="subject-modern">Payment issue detected</span>
+            <span class="snippet-modern">Please update your billing information</span>
+        </div>
+        <div class="row-time-modern">Yesterday</div>
     </div>
 
-<div class="gmail-row read disabled">
-    <div class="row-left">
-        <span class="checkbox"></span>
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('github_dependabot')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">GitHub</span>
+            <span class="subject-modern">Dependabot alerts</span>
+            <span class="snippet-modern">Security vulnerabilities detected in your repo</span>
+        </div>
+        <div class="row-time-modern">2 days ago</div>
     </div>
-    <div class="row-main">
-        <span class="sender">Microsoft</span>
-        <span class="subject">Your weekly activity summary</span>
-        <span class="snippet">Here’s what you’ve been working on this week</span>
-    </div>
-    <div class="row-time">3 days ago</div>
-</div>
 
-<div class="gmail-row read disabled">
-    <div class="row-left">
-        <span class="checkbox"></span>
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('university_schedule')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">University Admin</span>
+            <span class="subject-modern">Exam schedule update</span>
+            <span class="snippet-modern">The revised exam timetable is now available</span>
+        </div>
+        <div class="row-time-modern">2 days ago</div>
     </div>
-    <div class="row-main">
-        <span class="sender">Twitter</span>
-        <span class="subject">New login from Chrome</span>
-        <span class="snippet">We noticed a new login to your account</span>
-    </div>
-    <div class="row-time">3 days ago</div>
-</div>
 
-<div class="gmail-row read disabled">
-    <div class="row-left">
-        <span class="checkbox"></span>
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('microsoft_summary')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">Microsoft</span>
+            <span class="subject-modern">Your weekly activity summary</span>
+            <span class="snippet-modern">Here's what you've been working on this week</span>
+        </div>
+        <div class="row-time-modern">3 days ago</div>
     </div>
-    <div class="row-main">
-        <span class="sender">Coursera</span>
-        <span class="subject">Course progress reminder</span>
-        <span class="snippet">You’re halfway through your cybersecurity course</span>
+
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('twitter_login')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">Twitter</span>
+            <span class="subject-modern">New login from Chrome</span>
+            <span class="snippet-modern">We noticed a new login to your account</span>
+        </div>
+        <div class="row-time-modern">3 days ago</div>
     </div>
-    <div class="row-time">4 days ago</div>
-</div>
+
+    <div class="gmail-row-modern read-modern active-modern" onclick="openPreviewEmail('coursera_progress')">
+        <div class="row-left-modern">
+            <span class="checkbox-modern"></span>
+        </div>
+        <div class="row-main-modern">
+            <span class="sender-modern">Coursera</span>
+            <span class="subject-modern">Course progress reminder</span>
+            <span class="snippet-modern">You're halfway through your cybersecurity course</span>
+        </div>
+        <div class="row-time-modern">4 days ago</div>
+    </div>
 
 </div>
 

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Awareness Simulation Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .welcome-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .welcome-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            padding: 60px;
+            text-align: center;
+            max-width: 650px;
+            margin: 20px;
+            position: relative;
+            z-index: 1;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5));
+            }
+        }
+
+        .title-emoji {
+            display: inline-block;
+            margin-right: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+            animation: fadeInDown 1s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-description {
+            font-size: 1.05rem;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            animation: fadeInDown 1s ease-out 0.4s both;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 45px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            animation: fadeInDown 1s ease-out 0.6s both;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .start-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 140px;
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f0ff 100%);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 0.8s both;
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature:hover {
+            transform: translateY(-8px);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .feature:hover .feature-title,
+        .feature:hover .feature-desc {
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .feature-desc {
+            font-size: 0.95rem;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #fff8e1 100%);
+            border-left: 6px solid #ff9800;
+            border-radius: 12px;
+            padding: 18px 25px;
+            margin: 35px 0;
+            color: #856404;
+            font-weight: 700;
+            font-size: 1.08rem;
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.15);
+            animation: slideInLeft 1s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 40px 25px;
+            }
+
+            .welcome-title {
+                font-size: 2.2rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .features {
+                flex-direction: column;
+            }
+
+            .start-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <h1 class="welcome-title">
+                <span class="title-emoji">🎣</span>Phishing Awareness Simulator
+            </h1>
+            <p class="welcome-subtitle">Master the art of spotting cyber threats</p>
+
+            <p class="welcome-description">
+                Dive into realistic phishing scenarios and strengthen your cybersecurity defenses. Learn how cybercriminals operate and develop the skills to protect yourself in real-world situations.
+            </p>
+
+            <div class="warning-box">
+                <span class="warning-text">EDUCATIONAL PURPOSE ONLY — Never enter real credentials or sensitive information</span>
+            </div>
+
+            <button class="start-btn" onclick="startSimulation()">Launch Simulation</button>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-title">Email Threats</div>
+                    <div class="feature-desc">Navigate a realistic inbox filled with deceptive emails</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Fake Login</div>
+                    <div class="feature-desc">Identify malicious banking pages designed to steal credentials</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Smart Defense</div>
+                    <div class="feature-desc">Learn tactics to report and block phishing attempts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startSimulation() {
+            window.location.href = '/inbox';
+        }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

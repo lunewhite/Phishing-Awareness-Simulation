@@ -4,43 +4,38 @@
     <title>Email</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="gmail-bg">
+<body class="gmail-bg-modern">
 
-<div class="gmail-topbar">
-    <button class="back-btn" onclick="ignoreEmail()">← Inbox</button>
+<div class="gmail-topbar-modern">
+    <button class="back-btn-modern" onclick="ignoreEmail()" aria-label="Back to inbox">&#8592;</button>
 </div>
 
-<div class="email-card">
-
-    <div class="email-header">
-        <div class="avatar">B</div>
-        <div>
-            <div id="sender" class="sender-name"></div>
-            <div class="sender-meta">to me</div>
-        </div>
+<div class="email-card-modern">
+    <div class="email-meta-grid-modern">
+        <div><span class="meta-label-modern">From</span> <span id="sender" class="sender-name-modern"></span></div>
+        <div id="email-time" class="meta-time-modern">Today</div>
+        <div><span class="meta-label-modern">Subject</span> <span id="subject" class="email-subject-modern"></span></div>
+        <div><span class="meta-label-modern">To</span> learner.inbox@northbridge-mail.com</div>
+        <span id="from-line" class="hidden-meta-modern"></span>
     </div>
 
-    <h2 id="subject" class="email-subject"></h2>
-
-    <div class="email-meta">
-        <span id="from-line"></span>
-        <span class="dot">•</span>
-        <span>Today</span>
+    <div class="email-banner-modern">
+        <span id="banner-brand" class="banner-brand-modern">State Bank of India</span>
+        <span id="banner-team" class="banner-team-modern">Support-Desk</span>
     </div>
 
-    <div id="body" class="email-body"></div>
+    <div id="email-mode-note" class="email-mode-note-modern" hidden></div>
 
-    <div class="email-link">
-        <a href="#" onclick="openLink(event)">Verify your account</a>
+    <div id="body" class="email-body-modern"></div>
+
+    <div id="email-link-section" class="email-link-modern">
+        <a id="email-cta" class="email-cta-modern" href="#" onclick="openLink(event)">Change your credential here</a>
     </div>
 
-    <div class="email-actions">
-        <button class="report-btn" onclick="reportPhishing()">
-             Report phishing
-        </button>
+    <div id="email-actions" class="email-actions-modern">
+        <button id="report-btn" class="report-btn-modern" onclick="reportPhishing()">Report phishing</button>
     </div>
-
-</div>    
+</div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

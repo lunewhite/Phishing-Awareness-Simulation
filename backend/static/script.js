@@ -1,58 +1,274 @@
-/* ======================================================
-   PHISHING AWARENESS SIMULATOR - FRONTEND CONTROLLER
-   ====================================================== */
+// Define preview email templates for non-phishing examples
+const previewEmails = {
+    google_security: {
+        sender: "Google Account Team <no-reply@accounts.google.com>",
+        subject: "Security alert",
+        body:
+            "Hi,\n\nWe noticed a new sign-in to your Google Account from Chrome on Windows earlier today.\n\nIf this was you, no action is needed.\n\nIf this wasn't you, review your recent security activity and update your password as soon as possible.\n\nGoogle Account Security",
+        brand: "Google",
+        team: "Account Security",
+        time: "Today, 9:41 AM"
+    },
+    linkedin_searches: {
+        sender: "LinkedIn Updates <members@linkedin.com>",
+        subject: "You appeared in 5 searches",
+        body:
+            "Hello,\n\nYour profile showed up in 5 recruiter and peer searches this week.\n\nStay active by updating your headline, adding recent projects, and responding to new connection requests.\n\nSee who viewed your profile when you next sign in.\n\nLinkedIn Member Updates",
+        brand: "LinkedIn",
+        team: "Member Updates",
+        time: "Today, 8:12 AM"
+    },
+    amazon_shipping: {
+        sender: "Amazon.in <shipment-tracking@amazon.in>",
+        subject: "Your order has shipped",
+        body:
+            "Hello,\n\nYour recent order has been shipped and is now in transit.\n\nEstimated delivery: Tomorrow by 8 PM.\n\nItems in this shipment:\n- Wireless mouse\n- USB-C adapter\n\nYou can review the latest tracking details from your Amazon orders page.\n\nAmazon Shipping",
+        brand: "Amazon",
+        team: "Shipping Updates",
+        time: "Yesterday"
+    },
+    netflix_billing: {
+        sender: "Netflix Billing <info@mailer.netflix.com>",
+        subject: "Payment issue detected",
+        body:
+            "Hi,\n\nWe were unable to process your latest monthly payment for your Netflix membership.\n\nYour account remains active for now, but streaming access may pause if the payment method is not updated before the next billing retry.\n\nYou can review your billing details from your Netflix account settings.\n\nNetflix Support",
+        brand: "Netflix",
+        team: "Billing Support",
+        time: "Yesterday"
+    },
+    github_dependabot: {
+        sender: "GitHub <noreply@github.com>",
+        subject: "Dependabot alerts",
+        body:
+            "Hello,\n\nDependabot found security vulnerabilities in one of your repository dependencies.\n\nRepository: cyber-lab-demo\nSeverity: Moderate\nPackage: example-package\n\nReview the alert details in the Security tab to inspect the affected version and available patch.\n\nGitHub Security",
+        brand: "GitHub",
+        team: "Security Alerts",
+        time: "2 days ago"
+    },
+    university_schedule: {
+        sender: "University Admin Office <admin@campus.edu>",
+        subject: "Exam schedule update",
+        body:
+            "Dear Student,\n\nThe revised examination timetable for the end-semester assessments has now been published.\n\nPlease review your department portal for room assignments, start times, and the updated invigilation rules before exam week begins.\n\nRegards,\nOffice of Academic Administration",
+        brand: "University",
+        team: "Admin Office",
+        time: "2 days ago"
+    },
+    microsoft_summary: {
+        sender: "Microsoft 365 <noreply@acct.microsoft.com>",
+        subject: "Your weekly activity summary",
+        body:
+            "Hello,\n\nHere is your Microsoft account activity summary for the past week.\n\nHighlights:\n- 3 documents edited in OneDrive\n- 2 sign-ins from your usual device\n- No password changes detected\n\nYou can review your full activity history from your Microsoft account dashboard.\n\nMicrosoft Account Team",
+        brand: "Microsoft",
+        team: "Account Activity",
+        time: "3 days ago"
+    },
+    twitter_login: {
+        sender: "X Security <verify@x.com>",
+        subject: "New login from Chrome",
+        body:
+            "Hi,\n\nWe noticed a new login to your account from Chrome on a Windows device.\n\nLocation estimate: Kolkata, India\nTime: 11:04 PM\n\nIf this was you, you can safely ignore this message. If not, review your active sessions and change your password immediately.\n\nX Security",
+        brand: "X",
+        team: "Security Notifications",
+        time: "3 days ago"
+    },
+    coursera_progress: {
+        sender: "Coursera <no-reply@coursera.org>",
+        subject: "Course progress reminder",
+        body:
+            "Hello,\n\nYou're halfway through your cybersecurity course and still on track to finish this month.\n\nNext up:\n- Phishing email analysis\n- Incident response basics\n- Final quiz\n\nA short study session this week will help you stay on schedule.\n\nCoursera Learning Team",
+        brand: "Coursera",
+        team: "Learning Team",
+        time: "4 days ago"
+    }
+};
 
-/* ---------- INBOX ---------- */
+const TRAINING_STATE_KEYS = [
+    "trainingSummary",
+    "currentEpisode",
+    "lastEmailEpisode",
+    "activeEmailEpisode",
+    "ep2Unlocked",
+    "previewEmailId"
+];
 
+// Flag to check if we're on the summary page
 const isSummaryPage = document.getElementById("final-score") !== null;
 
-async function openEmail() {
-    // Do NOT restart campaign if summary exists
+function resetTrainingState() {
+    TRAINING_STATE_KEYS.forEach(key => localStorage.removeItem(key));
+}
+
+async function clearSessionOnWelcome() {
+    if (window.location.pathname === "/welcome") {
+        resetTrainingState();
+        try {
+            await fetch("/api/reset-session", { method: "POST" });
+        } catch (err) {
+            console.warn("Unable to reset server session:", err);
+        }
+    }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    clearSessionOnWelcome();
+});
+
+
+/* ---------- INBOX FUNCTIONS ---------- */
+
+async function openEmail(targetEpisodeId = null) {
+    localStorage.removeItem("previewEmailId");
+
+    // If a previous training run ended, reset local state for a fresh start
     if (localStorage.getItem("trainingSummary")) {
-        window.location.href = "/summary";
-        return;
+        localStorage.removeItem("trainingSummary");
+        localStorage.removeItem("currentEpisode");
+        localStorage.removeItem("lastEmailEpisode");
+        localStorage.removeItem("activeEmailEpisode");
+        localStorage.removeItem("ep2Unlocked");
     }
 
-    // Start campaign ONLY if not already started
+    // Start the campaign if not already started
     if (!localStorage.getItem("currentEpisode")) {
         const res = await fetch("/api/start/bank_alert");
         const data = await res.json();
         localStorage.setItem("currentEpisode", data.episode_id);
         localStorage.setItem("lastEmailEpisode", data.episode_id);
+        localStorage.removeItem("ep2Unlocked");
+    }
+
+    if (targetEpisodeId) {
+        localStorage.setItem("lastEmailEpisode", targetEpisodeId);
     }
 
     window.location.href = "/email";
 }
 
+/**
+ * Opens a preview email (non-phishing example) for viewing.
+ * @param {string} previewEmailId - The ID of the preview email to display
+ */
+function openPreviewEmail(previewEmailId) {
+    localStorage.setItem("previewEmailId", previewEmailId);
+    window.location.href = "/email";
+}
 
+/**
+ * Updates the inbox UI to show the correct email states based on progress.
+ */
+function loadInboxState() {
+    const rowEp1 = document.getElementById("row-ep1");
+    const rowEp2 = document.getElementById("row-ep2");
+    if (!rowEp1 || !rowEp2) return;
 
-/* ---------- EMAIL VIEW ---------- */
+    const currentEpisode = localStorage.getItem("currentEpisode");
+    const lastEmailEpisode = localStorage.getItem("lastEmailEpisode");
+    const unlocked = localStorage.getItem("ep2Unlocked") === "true";
+    const showEpisodeTwo =
+        unlocked &&
+        (currentEpisode === "bank_ep_2" || lastEmailEpisode === "bank_ep_2");
 
+    if (showEpisodeTwo) {
+        rowEp2.style.display = "flex";
+        rowEp1.classList.remove("unread-modern", "active-modern");
+        rowEp1.classList.add("read-modern", "disabled-modern");
+    } else {
+        rowEp2.style.display = "none";
+        rowEp1.classList.remove("read-modern", "disabled-modern");
+        rowEp1.classList.add("unread-modern", "active-modern");
+    }
+}
+
+/* ---------- EMAIL VIEW FUNCTIONS ---------- */
+
+/**
+ * Loads and displays the current email content.
+ */
 async function loadEmail() {
-    const episodeId = 
-    localStorage.getItem("lastEmailEpisode") ||
-    localStorage.getItem("currentEpisode");
-    if (!episodeId) return;
+    const previewEmailId = localStorage.getItem("previewEmailId");
+    if (previewEmailId && previewEmails[previewEmailId]) {
+        const preview = previewEmails[previewEmailId];
+        renderEmail(preview, { readOnly: true });
+        return;
+    }
+
+    let episodeId = 
+        localStorage.getItem("lastEmailEpisode") ||
+        localStorage.getItem("currentEpisode");
+
+    if (!episodeId) {
+        const res = await fetch("/api/start/bank_alert");
+        const data = await res.json();
+        episodeId = data.episode_id;
+        localStorage.setItem("currentEpisode", episodeId);
+        localStorage.setItem("lastEmailEpisode", episodeId);
+        localStorage.removeItem("ep2Unlocked");
+    }
+
+    localStorage.setItem("activeEmailEpisode", episodeId);
 
     const res = await fetch(`/api/episode/${episodeId}`);
     const data = await res.json();
 
-    document.getElementById("sender").innerText =
-        "From: " + (data.episode.sender || "Unknown");
+    renderEmail(
+        {
+            sender: data.episode.sender || "Unknown",
+            subject: data.episode.subject || "",
+            body: data.episode.body || "",
+            brand: "State Bank of India",
+            team: "Support-Desk",
+            time: "Today"
+        },
+        { readOnly: false }
+    );
+}
 
-    document.getElementById("subject").innerText =
-        data.episode.subject || "";
+function renderEmail(email, options = {}) {
+    const { readOnly = false } = options;
+    const senderEl = document.getElementById("sender");
+    const subjectEl = document.getElementById("subject");
+    const bodyEl = document.getElementById("body");
+    const fromLineEl = document.getElementById("from-line");
+    const brandEl = document.getElementById("banner-brand");
+    const teamEl = document.getElementById("banner-team");
+    const timeEl = document.getElementById("email-time");
+    const modeNoteEl = document.getElementById("email-mode-note");
+    const linkSectionEl = document.getElementById("email-link-section");
+    const actionsEl = document.getElementById("email-actions");
+    const ctaEl = document.getElementById("email-cta");
 
-    document.getElementById("body").innerText =
-        data.episode.body || "";
-    document.getElementById("from-line").innerText =
-        data.episode.sender || "";
+    senderEl.innerText = email.sender || "Unknown";
+    subjectEl.innerText = email.subject || "";
+    bodyEl.innerText = email.body || "";
+    fromLineEl.innerText = email.sender || "";
+    brandEl.innerText = email.brand || "Inbox";
+    teamEl.innerText = email.team || "";
+    timeEl.innerText = email.time || "Today";
+
+    if (readOnly) {
+        modeNoteEl.hidden = false;
+        modeNoteEl.innerText = "Read-only preview: this message is for viewing only.";
+        linkSectionEl.style.display = "none";
+        actionsEl.style.display = "flex";
+        ctaEl.innerText = "";
+    } else {
+        modeNoteEl.hidden = true;
+        modeNoteEl.innerText = "";
+        linkSectionEl.style.display = "block";
+        actionsEl.style.display = "flex";
+        ctaEl.innerText = "Change your credential here";
+    }
 }
 
 
 // User clicks phishing link inside email
 async function openLink(event) {
     event.preventDefault();
+
+    if (localStorage.getItem("previewEmailId")) {
+        return;
+    }
 
     const episodeId = localStorage.getItem("currentEpisode");
     if (!episodeId) {
@@ -61,7 +277,6 @@ async function openLink(event) {
         return;
     }
 
-    // Store last email
     localStorage.setItem("lastEmailEpisode", episodeId);
 
     const result = await submitAction("click");
@@ -83,12 +298,31 @@ async function openLink(event) {
 
 // User reports phishing
 async function reportPhishing() {
-    const result = await submitAction("report");
-
-    // If backend ends campaign → summary
-    if (result && result.status === "completed") {
-        handleCompletion(result);
+    if (localStorage.getItem("previewEmailId")) {
+        const summary = {
+            status: "completed",
+            awareness_score: 0,
+            risk_level: "High",
+            mistakes: ["false_report"],
+            strengths: []
+        };
+        localStorage.setItem("trainingSummary", JSON.stringify(summary));
+        localStorage.removeItem("previewEmailId");
+        window.location.href = "/summary";
         return;
+    }
+
+    const emailEpisodeId =
+        localStorage.getItem("activeEmailEpisode") ||
+        localStorage.getItem("lastEmailEpisode") ||
+        localStorage.getItem("currentEpisode");
+
+    const result = await submitAction("report", emailEpisodeId);
+    if (!result) return;
+
+    if (result.next_episode) {
+        localStorage.setItem("currentEpisode", result.next_episode);
+        window.location.href = "/email";
     }
 }
 
@@ -96,16 +330,36 @@ async function reportPhishing() {
 
 // User closes email / goes back → ignore email
 async function ignoreEmail() {
-    const result = await submitAction("ignore");
+    if (localStorage.getItem("previewEmailId")) {
+        localStorage.removeItem("previewEmailId");
+        window.location.href = "/inbox";
+        return;
+    }
 
-    // If training ended → summary
-    if (result && result.status === "completed") {
+    const emailEpisodeId =
+        localStorage.getItem("activeEmailEpisode") ||
+        localStorage.getItem("lastEmailEpisode") ||
+        localStorage.getItem("currentEpisode");
+
+    const result = await submitAction("ignore", emailEpisodeId);
+    if (!result) return;
+
+    if (result.status === "completed") {
         handleCompletion(result);
         return;
     }
 
-    // Otherwise, fallback
-    window.location.href = "/summary";
+    if (result.next_episode) {
+        if (emailEpisodeId === "bank_ep_1" && result.next_episode === "bank_ep_2") {
+            localStorage.setItem("ep2Unlocked", "true");
+        }
+        localStorage.setItem("currentEpisode", result.next_episode);
+        localStorage.setItem("lastEmailEpisode", result.next_episode);
+        window.location.href = "/inbox";
+        return;
+    }
+
+    window.location.href = "/inbox";
 }
 
 
@@ -139,9 +393,11 @@ async function submitCredentials() {
      if (result && result.next_episode) {
         localStorage.setItem("currentEpisode", result.next_episode);
     }
-    // Show compromise warning modal
+    // Show compromise warning modal and reset cancel decision modal if it was opened earlier.
     const modal = document.getElementById("compromise-modal");
-        modal.style.display = "flex";
+    const cancelModal = document.getElementById("cancel-decision-modal");
+    if (cancelModal) cancelModal.style.display = "none";
+    if (modal) modal.style.display = "flex";
 }
 
 function acknowledgeCompromise(){
@@ -150,15 +406,25 @@ function acknowledgeCompromise(){
 }
 
 async function closePage() {
-    const episodeId = localStorage.getItem("currentEpisode");
+    const result = await submitAction("close");
+    if (!result) return;
+    const cancelModal = document.getElementById("cancel-decision-modal");
+    if (cancelModal) cancelModal.style.display = "flex";
+}
 
-    // Only submit "close" if we are on the phishing simulation page
-    if (episodeId === "bank_sim") {
-        await submitAction("close");
+/*-------------- Cancel Decision Modal ---------------*/
+async function reportAfterCancel() {
+    const result = await submitAction("report_after_cancel");
+    if (result && result.status === "completed") {
+        handleCompletion(result);
     }
+}
 
-    // UI navigation only
-    window.location.href = "/email-preview";
+async function ignoreAfterCancel() {
+    const result = await submitAction("ignore_after_cancel");
+    if (result && result.status === "completed") {
+        handleCompletion(result);
+    }
 }
 
 
@@ -205,8 +471,8 @@ async function loadRecovery() {
 
 /* ---------- CORE ACTION HANDLER ---------- */
 
-async function submitAction(actionType) {
-    const episodeId = localStorage.getItem("currentEpisode");
+async function submitAction(actionType, episodeIdOverride = null) {
+    const episodeId = episodeIdOverride || localStorage.getItem("currentEpisode");
 
     console.log("DEBUG submitAction ->", {
         episodeId,
@@ -232,6 +498,13 @@ async function submitAction(actionType) {
     console.log("DEBUG response status:", res.status);
 
     const data = await res.json();
+
+    if (data && data.status === "restart_required") {
+        alert("Session expired. Restarting training.");
+        localStorage.clear();
+        window.location.href = "/";
+        return;
+    }
 
     // backend rejected request
     if (!res.ok) {
@@ -265,17 +538,46 @@ function loadSummary() {
     }
 
     const summary = JSON.parse(summaryRaw);
+    const actionLabels = {
+        click: "Clicked a phishing link.",
+        submit: "Entered credentials on the phishing page.",
+        ignore: "Ignored a suspicious email without reporting it.",
+        reported_phishing: "Reported the phishing attempt.",
+        exited_safely: "Exited the suspicious page without submitting credentials.",
+        password: "Changed account password after the incident.",
+        support: "Contacted bank support to secure the account.",
+        report: "Reported the suspicious email.",
+        report_after_cancel: "Reported phishing after canceling the page.",
+        ignore_after_cancel: "Closed the cancel/report prompt without reporting.",
+        false_report: "Reported a safe email as phishing."
+    };
 
-    /* ---- Score ---- */
+    function toReadableAction(value) {
+        if (!value) return "Unknown action.";
+        return actionLabels[value] || value;
+    }
+
     const scoreEl = document.getElementById("final-score");
     scoreEl.innerText = `Awareness Score: ${summary.awareness_score}`;
 
-    /* ---- Risk Level ---- */
     const riskEl = document.getElementById("risk-level");
     riskEl.innerText = `Risk Level: ${summary.risk_level}`;
     riskEl.classList.add(summary.risk_level.toLowerCase());
 
-    /* ---- Mistakes ---- */
+    const riskExplainerEl = document.getElementById("risk-explainer");
+    if (riskExplainerEl) {
+        if (summary.risk_level === "Low") {
+            riskExplainerEl.innerText =
+                "Strong awareness: your choices show good phishing resistance.";
+        } else if (summary.risk_level === "Medium") {
+            riskExplainerEl.innerText =
+                "Moderate awareness: some actions were safe, but there are gaps to improve.";
+        } else {
+            riskExplainerEl.innerText =
+                "High risk: this run shows vulnerable behavior and needs immediate improvement.";
+        }
+    }
+
     const mistakesList = document.getElementById("mistakes-list");
     mistakesList.innerHTML = "";
 
@@ -284,14 +586,17 @@ function loadSummary() {
         li.innerText = "No risky actions detected.";
         mistakesList.appendChild(li);
     } else {
+        const seenMistakes = new Set();
         summary.mistakes.forEach(m => {
+            const readable = toReadableAction(m);
+            if (seenMistakes.has(readable)) return;
+            seenMistakes.add(readable);
             const li = document.createElement("li");
-            li.innerText = m;
+            li.innerText = readable;
             mistakesList.appendChild(li);
         });
     }
 
-    /* ---- Strengths ---- */
     const strengthsList = document.getElementById("strengths-list");
     strengthsList.innerHTML = "";
 
@@ -300,9 +605,13 @@ function loadSummary() {
         li.innerText = "No positive actions recorded.";
         strengthsList.appendChild(li);
     } else {
+        const seenStrengths = new Set();
         summary.strengths.forEach(s => {
+            const readable = toReadableAction(s);
+            if (seenStrengths.has(readable)) return;
+            seenStrengths.add(readable);
             const li = document.createElement("li");
-            li.innerText = s;
+            li.innerText = readable;
             strengthsList.appendChild(li);
         });
     }
@@ -340,4 +649,12 @@ document.addEventListener("DOMContentLoaded", () => {
         loadSummary();
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("row-ep1")) {
+        loadInboxState();
+    }
+});
+
+
 
