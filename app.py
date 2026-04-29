@@ -12,8 +12,7 @@ app = Flask(
 app.secret_key = "phishing-awareness-secret-key"
 DB_PATH = BASE_DIR / "phishing.db"
 
-# --------------------------- Route Handlers ---------------------------
-
+#Route Handlers
 @app.route("/")
 def index_page():
     return render_template("index.html")
@@ -52,7 +51,7 @@ def recovery_page():
 def summary_page():
     return render_template("summary.html")
 
-# --------------------------- Utility Functions ---------------------------
+#Utility Functions 
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -60,7 +59,7 @@ def get_db():
     return conn
 
 
-# --------------------------- API Endpoints ---------------------------
+#API Endpoints
 
 @app.route("/api/inbox")
 def inbox():
@@ -143,9 +142,6 @@ def get_episode(episode_id):
         "actions": actions
     })
 
-
-# ---------------------------
-# API 4: Submit Action
 @app.route("/api/action", methods=["POST"])
 def submit_action():
     data = request.json

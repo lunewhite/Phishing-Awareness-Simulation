@@ -7,7 +7,7 @@ DB_PATH = BASE_DIR / "phishing.db"
 
 if DB_PATH.exists():
     DB_PATH.unlink()
-    print("🗑️ Existing database deleted")
+    print("Existing database deleted")
 
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
@@ -162,4 +162,4 @@ VALUES (?, ?, ?, ?, ?)
 conn.commit()
 conn.close()
 
-print("✅ Fresh database created successfully")
+print("Fresh database created successfully")

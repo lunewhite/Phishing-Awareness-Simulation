@@ -1,4 +1,4 @@
-// Define preview email templates for non-phishing examples
+//templates for other emails examples
 const previewEmails = {
     google_security: {
         sender: "Google Account Team <no-reply@accounts.google.com>",
@@ -92,7 +92,7 @@ const TRAINING_STATE_KEYS = [
     "previewEmailId"
 ];
 
-// Flag to check if we're on the summary page
+//to check if we are on summary page
 const isSummaryPage = document.getElementById("final-score") !== null;
 
 function resetTrainingState() {
@@ -115,12 +115,12 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-/* ---------- INBOX FUNCTIONS ---------- */
+//INBOX FUNCTIONS
 
 async function openEmail(targetEpisodeId = null) {
     localStorage.removeItem("previewEmailId");
 
-    // If a previous training run ended, reset local state for a fresh start
+    //if previous sim ended retart whole thing
     if (localStorage.getItem("trainingSummary")) {
         localStorage.removeItem("trainingSummary");
         localStorage.removeItem("currentEpisode");
@@ -129,7 +129,7 @@ async function openEmail(targetEpisodeId = null) {
         localStorage.removeItem("ep2Unlocked");
     }
 
-    // Start the campaign if not already started
+    //start campaigning if not started
     if (!localStorage.getItem("currentEpisode")) {
         const res = await fetch("/api/start/bank_alert");
         const data = await res.json();
@@ -145,18 +145,11 @@ async function openEmail(targetEpisodeId = null) {
     window.location.href = "/email";
 }
 
-/**
- * Opens a preview email (non-phishing example) for viewing.
- * @param {string} previewEmailId - The ID of the preview email to display
- */
 function openPreviewEmail(previewEmailId) {
     localStorage.setItem("previewEmailId", previewEmailId);
     window.location.href = "/email";
 }
 
-/**
- * Updates the inbox UI to show the correct email states based on progress.
- */
 function loadInboxState() {
     const rowEp1 = document.getElementById("row-ep1");
     const rowEp2 = document.getElementById("row-ep2");
@@ -180,11 +173,8 @@ function loadInboxState() {
     }
 }
 
-/* ---------- EMAIL VIEW FUNCTIONS ---------- */
+//EMAIL VIEW FUNCTIONS
 
-/**
- * Loads and displays the current email content.
- */
 async function loadEmail() {
     const previewEmailId = localStorage.getItem("previewEmailId");
     if (previewEmailId && previewEmails[previewEmailId]) {
@@ -262,7 +252,7 @@ function renderEmail(email, options = {}) {
 }
 
 
-// User clicks phishing link inside email
+//when phishing link is clicked
 async function openLink(event) {
     event.preventDefault();
 
@@ -296,7 +286,7 @@ async function openLink(event) {
 
 
 
-// User reports phishing
+//user reports phishing email
 async function reportPhishing() {
     if (localStorage.getItem("previewEmailId")) {
         const summary = {
@@ -328,7 +318,7 @@ async function reportPhishing() {
 
 
 
-// User closes email / goes back → ignore email
+//user closes or ignores emails
 async function ignoreEmail() {
     if (localStorage.getItem("previewEmailId")) {
         localStorage.removeItem("previewEmailId");
@@ -364,14 +354,14 @@ async function ignoreEmail() {
 
 
 
-/* ---------- PHISHING SITE SIMULATION ---------- */
+//phishing site simulation
 
 async function submitCredentials() {
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
     const errorMsg = document.getElementById("login-error");
 
-    // Client-side validation
+    //client-side validation
     
     if (!usernameInput || !passwordInput || !errorMsg) {
         console.error("Login form elements not found");
@@ -386,14 +376,14 @@ async function submitCredentials() {
         return;
     }
 
-    // Hide error if validation passes
+    //hide error if validation passes
     errorMsg.style.display = "none";
     const result = await submitAction("submit");
     
      if (result && result.next_episode) {
         localStorage.setItem("currentEpisode", result.next_episode);
     }
-    // Show compromise warning modal and reset cancel decision modal if it was opened earlier.
+    //show compromise modal if user submit credential
     const modal = document.getElementById("compromise-modal");
     const cancelModal = document.getElementById("cancel-decision-modal");
     if (cancelModal) cancelModal.style.display = "none";
@@ -412,7 +402,7 @@ async function closePage() {
     if (cancelModal) cancelModal.style.display = "flex";
 }
 
-/*-------------- Cancel Decision Modal ---------------*/
+//Cancel Decision Modal 
 async function reportAfterCancel() {
     const result = await submitAction("report_after_cancel");
     if (result && result.status === "completed") {
@@ -430,7 +420,7 @@ async function ignoreAfterCancel() {
 
 
 
-/* ---------- LOAD RECOVERY PAGE ---------- */
+//LOAD RECOVERY PAGE 
 
 async function loadRecovery() {
     const episodeId = localStorage.getItem("currentEpisode");
@@ -452,13 +442,13 @@ async function loadRecovery() {
         btn.onclick = async () => {
             const result = await submitAction(a.action_type);
 
-         // If training completed after recovery → go to summary
+         //go to summary
          if (result && result.status === "completed") {
               handleCompletion(result);
              return;
          }
 
-         // Fallback safety
+         //safety check
          window.location.href = "/summary";
      };
 
@@ -469,7 +459,7 @@ async function loadRecovery() {
 
 
 
-/* ---------- CORE ACTION HANDLER ---------- */
+//CORE ACTION HANDLER
 
 async function submitAction(actionType, episodeIdOverride = null) {
     const episodeId = episodeIdOverride || localStorage.getItem("currentEpisode");
@@ -479,7 +469,7 @@ async function submitAction(actionType, episodeIdOverride = null) {
         actionType
     });
     
-    // Safety check
+    // safety check
     if (!episodeId && !isSummaryPage) {
         alert("Session expired. Please restart the training.");
         window.location.href = "/";
@@ -514,24 +504,24 @@ async function submitAction(actionType, episodeIdOverride = null) {
         return;
     }
 
-    // Training completed
+    //simulation completed
     if (data.status === "completed") {
         handleCompletion(data);
         return;
     }
 
-    // Continue campaign
+    // continue
     if (data.next_episode) {
         localStorage.setItem("currentEpisode", data.next_episode);
     }
     return data;
 }
 
-/* ---------- LOAD SUMMARY PAGE ---------- */
+//LOAD SUMMARY PAGE 
 function loadSummary() {
     const summaryRaw = localStorage.getItem("trainingSummary");
 
-    // Safety: no summary data
+    // safety check
     if (!summaryRaw) {
         window.location.href = "/";
         return;
@@ -629,7 +619,7 @@ function restartTraining() {
 
 
 
-/* ---------- AUTO LOAD (PAGE DETECTION) ---------- */
+//AUTO LOAD (PAGE DETECTION) 
 
 document.addEventListener("DOMContentLoaded", () => {
     // Recovery page
